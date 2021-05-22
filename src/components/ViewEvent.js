@@ -1,7 +1,6 @@
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import Maps from "./Maps";
 
 import {
   Button,
@@ -17,7 +16,6 @@ import {
 import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import app from "../firebase";
-// import Footer from "./Footer";
 import Header from "./Header";
 import UpdateEventButton from "./UpdateEventButton";
 
@@ -31,6 +29,7 @@ const ViewEvent = ({ match }) => {
 
   const handleShow = () => setShow(true);
   const handleClose = () => setShow(false);
+
   //DELETE EVENT
   const handleDeleteEvent = () => {
     ref
@@ -41,17 +40,6 @@ const ViewEvent = ({ match }) => {
       });
     history.push("/events");
   };
-
-  // // UPDATE EVENT
-  // function updateEvent(updatedEvent) {
-  //   setLoading();
-  //   ref
-  //     .doc(updatedSchool.id)
-  //     .update(updatedSchool)
-  //     .catch((err) => {
-  //       console.error(err);
-  //     });
-  // }
 
   let history = useHistory();
   const handleBook = () => history.push(`/book-event/${event.id}`);
@@ -75,18 +63,8 @@ const ViewEvent = ({ match }) => {
       console.error("Error: " + e);
     }
     // eslint-disable-next-line
-  }, [match]);
+  }, [match.params.id]);
 
-  // const event = {
-  //   id: 1,
-  //   name: "EVENT 1",
-  //   price: 1000,
-  //   totalSeats: 100,
-  //   description:
-  //     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam eget eros quis magna pulvinar facilisis vitae eu mauris. Suspendisse convallis ipsum non enim lobortis, et mattis nulla laoreet. Morbi pulvinar turpis neque, ut aliquam ex vestibulum nec.",
-  //   image:
-  //     "https://images.unsplash.com/photo-1429514513361-8fa32282fd5f?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=967&q=80",
-  // };
   let adminButtons = null;
 
   if (currentUser) {
@@ -196,7 +174,8 @@ const ViewEvent = ({ match }) => {
                 {/* <hr /> */}
                 Date & Time:
                 {/* event.selectedDate */}
-                <div>{new Date(event.selectedDate).toDateString()}</div>
+                {/* new Date(event.selectedDate).toDateString() */}
+                <div>{event.selectedDate}</div>
               </ListGroup.Item>
               <ListGroup.Item>Total Seats : {event.totalSeats}</ListGroup.Item>
               <ListGroup.Item>Description: {event.description}</ListGroup.Item>
@@ -245,11 +224,6 @@ const ViewEvent = ({ match }) => {
                   </Button>
                 </ListGroup.Item>
                 <ListGroup.Item>{adminButtons}</ListGroup.Item>
-                {/* <ListGroup.Item> */}
-                <div className="m-0 p-3">
-                  <Maps />
-                </div>
-                {/* </ListGroup.Item> */}
               </ListGroup>
             </Card>
           </Col>

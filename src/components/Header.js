@@ -30,7 +30,7 @@ const Header = () => {
       <>
         <NavDropdown title="Profile" id="nav-dropdown">
           <NavDropdown.Item eventKey="4.1">
-            <Link className="btn" to="/">
+            <Link className="btn" to="/profile">
               profile details
             </Link>
           </NavDropdown.Item>

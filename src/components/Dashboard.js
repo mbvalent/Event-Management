@@ -1,7 +1,7 @@
 import { Alert } from "bootstrap";
 import React, { useState } from "react";
 import { Card, Button, Container } from "react-bootstrap";
-import { Link, Redirect, useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import Footer from "./Footer";
 import Header from "./Header";

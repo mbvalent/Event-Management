@@ -1,7 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Footer from "./Footer";
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import { Carousel } from "react-responsive-carousel";
 import Header from "./Header";
+import Typewriter from "typewriter-effect";
 const Home = () => {
   return (
     <div>
@@ -12,26 +15,95 @@ const Home = () => {
           <div className="row h-100 align-items-center justify-content-center text-center">
             <div className="col-lg-10 align-self-end">
               <h1 className="text-uppercase text-white font-weight-bold">
-                Lorem ipsum dolor sit amet consectetur adipiscing
+                {/* Lorem ipsum dolor sit amet consectetur adipiscing */}
+                <Typewriter
+                  options={{
+                    strings: ["Welcome to Event.io", "View Latest Events..."],
+                    autoStart: true,
+                    loop: true,
+                  }}
+                />
               </h1>
               <hr className="divider my-4" />
             </div>
             <div className="col-lg-8 align-self-baseline">
               <p className="text-success text-white-75 font-weight-light mb-5">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
-                dictum porta dolor in sagittis
+                Click below to start viewing latest events in your area. Book
+                Exciting{" "}
+                <p className="text-info">
+                  concerts, movies, shows and your favourite gigs...
+                </p>
+                {/* Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
+                dictum porta dolor in sagittis */}
               </p>
 
               <Link
                 to="/events"
                 className="btn btn-lg rounded-pill btn-warning border-0"
               >
-                Book Event
+                Events
               </Link>
             </div>
           </div>
         </div>
       </header>
+
+      <div>
+        <h3 className="text-center m-5">Testimonials</h3>
+        <Carousel
+          showArrows={true}
+          infiniteLoop={true}
+          showThumbs={false}
+          showStatus={true}
+          autoPlay={true}
+          interval={6100}
+        >
+          <div>
+            <img
+              src="https://res.cloudinary.com/practicaldev/image/fetch/s--0SCWkYwS--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/i/9dhr4cw2s0skgfig8qnw.png"
+              alt="asdw"
+            />
+            <div className="myCarousel">
+              <h3>Shirley Fultz</h3>
+              <h4>Designer</h4>
+              <p>
+                It's freeing to be able to catch up on customized news and not
+                be distracted by a social media element on the same site
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <img
+              src="https://res.cloudinary.com/practicaldev/image/fetch/s--nSI8V6RE--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/i/81co8nilff5r9eer3xga.png"
+              alt="asdw"
+            />
+            <div className="myCarousel">
+              <h3>Daniel Keystone</h3>
+              <h4>Designer</h4>
+              <p>
+                The simple and intuitive design makes it easy for me use. I
+                highly recommend Fetch to my peers.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-3 mb-5">
+            <img
+              src="https://res.cloudinary.com/practicaldev/image/fetch/s--gRFMHqWs--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://dev-to-uploads.s3.amazonaws.com/i/1xwiaya5i7wweic3pz96.png"
+              alt="asdw"
+            />
+            <div className="myCarousel">
+              <h3>Theo Sorel</h3>
+              <h4>Designer</h4>
+              <p>
+                I enjoy catching up with Fetch on my laptop, or on my phone when
+                I'm on the go!
+              </p>
+            </div>
+          </div>
+        </Carousel>
+      </div>
 
       {/* Contact */}
       <section className="bg-light page-section" id="contact">

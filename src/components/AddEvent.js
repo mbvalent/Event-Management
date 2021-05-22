@@ -1,44 +1,17 @@
 import React, { useState } from "react";
-// import {useMemo} from 'react';
 import { Card, Container, Spinner } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import Footer from "./Footer";
 import Header from "./Header";
-// import { useDropzone } from "react-dropzone";
 import { v4 as uuidv4 } from "uuid";
 import app from "../firebase";
 import { ToastContainer, toast } from "react-toastify";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useAuth } from "../contexts/AuthContext";
-
-// const baseStyle = {
-//   flex: 1,
-//   display: "flex",
-//   flexDirection: "column",
-//   alignItems: "center",
-//   padding: "20px",
-//   borderWidth: 2,
-//   borderRadius: 2,
-//   borderColor: "#eeeeee",
-//   borderStyle: "dashed",
-//   backgroundColor: "#fafafa",
-//   color: "#bdbdbd",
-//   outline: "none",
-//   transition: "border .24s ease-in-out",
-// };
-
-// const activeStyle = {
-//   borderColor: "#2196f3",
-// };
-
-// const acceptStyle = {
-//   borderColor: "#00e676",
-// };
-
-// const rejectStyle = {
-//   borderColor: "#ff1744",
-// };
+import { Alert } from "react-bootstrap";
+import { useRef } from "react";
+import { useEffect } from "react";
 
 const AddEvent = () => {
   const { currentUser } = useAuth();
@@ -49,22 +22,45 @@ const AddEvent = () => {
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState("");
   const [totalSeats, setTotalSeats] = useState(0);
+  const nameRef = useRef();
+
+  const [error, setError] = useState("");
 
   const ref = app.firestore().collection("event");
+
+  useEffect(() => {
+    nameRef.current.focus();
+  }, []);
+
+  const validationRules = (newEvent) => {
+    if (
+      newEvent.name === "" ||
+      newEvent.selectedDate === "" ||
+      newEvent.totalSeats === "" ||
+      newEvent.price === ""
+    ) {
+      return true;
+    }
+    return false;
+  };
 
   // CREATE FUNCTION
   function addEvent(newEvent) {
     newEvent.selectedDate = String(newEvent.selectedDate);
+    if (validationRules(newEvent)) {
+      window.scrollTo(0, 0);
+      return setError("Please Fill Required Fields (*)");
+    }
     console.log("this is date" + String(newEvent.selectedDate));
     console.log("this is date format: " + typeof newEvent.selectedDate);
     setLoading(true);
     ref
-      //.doc() use if for some reason you want that firestore generates the id
       .doc(newEvent.id)
       .set(newEvent)
       .then(() => {
         setLoading(false);
         // setEvents((prev) => [newEvent, ...prev]);
+        setError("");
         toast.success("Event Added Successfully!", {
           position: "top-center",
           autoClose: 2500,
@@ -90,31 +86,6 @@ const AddEvent = () => {
         });
       });
   }
-
-  // const {
-  //   isDragActive,
-  //   isDragAccept,
-  //   isDragReject,
-  //   acceptedFiles,
-  //   getRootProps,
-  //   getInputProps,
-  // } = useDropzone({ accept: "image/*" });
-
-  // const files = acceptedFiles.map((file) => (
-  //   <li key={file.path}>
-  //     {file.path} - {file.size} bytes
-  //   </li>
-  // ));
-
-  // const style = useMemo(
-  //   () => ({
-  //     ...baseStyle,
-  //     ...(isDragActive ? activeStyle : {}),
-  //     ...(isDragAccept ? acceptStyle : {}),
-  //     ...(isDragReject ? rejectStyle : {}),
-  //   }),
-  //   [isDragActive, isDragReject, isDragAccept]
-  // );
 
   let check = null;
   if (currentUser) {
@@ -153,49 +124,22 @@ const AddEvent = () => {
       >
         <div className="w-100" style={{ maxWidth: "500px" }}>
           <Link className="mb-2 btn btn-lg btn-light" to="/home">
-            <i className="far fa-hand-point-left"></i> Go Back
+            <i className="far fa-hand-point-left"></i> Back to Events
           </Link>
           <Card className="rounded shadow bg-light">
             <Card.Body>
+              {error && <Alert variant="danger">{error}</Alert>}
               <form id="rest-form">
-                {/* <div className="row mb-3">
-                  <div className="col">
-                    <div className="form-outline">
-                      <input
-                        type="text"
-                        id="form6Example1"
-                        className=" form-control"
-                      />
-                      <label className=" form-label" for="form6Example1">
-                        Event name
-                      </label>
-                    </div>
-                  </div>
-                  <div className="col">
-                    <div className="form-outline">
-                      <input
-                        type="text"
-                        id="form6Example2"
-                        className="form-control"
-                      />
-                      <label className="form-label" for="form6Example2">
-                        Last name
-                      </label>
-                    </div>
-                  </div>
-                </div> */}
-
-                <div className="form-outline mb-3">
+                <div className="form-outline mt-2 mb-3">
                   <input
                     type="text"
                     id="form6Example3"
                     className="form-control"
+                    ref={nameRef}
                     onChange={(e) => setName(e.target.value)}
                     required
                   />
-                  <label className="mt-1 form-label" for="form6Example3">
-                    Event Name*
-                  </label>
+                  <label className="mt-1 form-label">Event Name*</label>
                 </div>
 
                 <div className="row mb-3">
@@ -211,12 +155,10 @@ const AddEvent = () => {
                       timeFormat="p"
                       // showYearDropdown
                       // scrollableMonthYearDropdown
+                      required
                       onChange={(date) => setSelectedDate(date)}
                     />
-                    <label
-                      className="d-block mt-1 form-label"
-                      for="form6Example1"
-                    >
+                    <label className="d-block mt-1 form-label">
                       Date & Time*
                     </label>
                   </div>
@@ -226,28 +168,12 @@ const AddEvent = () => {
                       id="form6Example2"
                       className="form-control"
                       min="0"
+                      required
                       onChange={(e) => setTotalSeats(e.target.value)}
                     />
-                    <label className="mt-1 form-label" for="form6Example2">
-                      Total Seats
-                    </label>
+                    <label className="mt-1 form-label">Total Seats*</label>
                   </div>
                 </div>
-
-                {/* <section>
-                  <div {...getRootProps({ style })}>
-                    <input {...getInputProps()} />
-                    <p>
-                      Drag 'n' drop some files here, or click to select files
-                    </p>
-                  </div>
-                  <label className="form-label" for="form6Example5">
-                    Image
-                  </label>
-                  <aside>
-                    <ul>{files}</ul>
-                  </aside>
-                </section> */}
 
                 <div className="form-outline mb-3">
                   <input
@@ -256,9 +182,7 @@ const AddEvent = () => {
                     className="form-control"
                     onChange={(e) => setImage(e.target.value)}
                   />
-                  <label className="mt-1 form-label" for="form6Example5">
-                    Image
-                  </label>
+                  <label className="mt-1 form-label">Image</label>
                 </div>
 
                 <div className="form-outline mb-3">
@@ -266,12 +190,11 @@ const AddEvent = () => {
                     type="number"
                     min="0"
                     id="form6Example6"
+                    required
                     className="form-control"
                     onChange={(e) => setPrice(e.target.value)}
                   />
-                  <label className="mt-1 form-label" for="form6Example6">
-                    Price ($)
-                  </label>
+                  <label className="mt-1 form-label">Price* ($)</label>
                 </div>
 
                 <div className="form-outline mb-3">
@@ -281,9 +204,7 @@ const AddEvent = () => {
                     rows="4"
                     onChange={(e) => setDescription(e.target.value)}
                   ></textarea>
-                  <label className="mt-1 form-label" for="form6Example7">
-                    Description
-                  </label>
+                  <label className="mt-1 form-label">Description</label>
                 </div>
               </form>
               <button

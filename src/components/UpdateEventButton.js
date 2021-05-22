@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Button, Modal, Spinner } from "react-bootstrap";
 import app from "../firebase";
 import DatePicker from "react-datepicker";
-import { v4 as uuidv4 } from "uuid";
 
 const UpdateEventButton = ({ event }) => {
   const [updatedName, setupdatedName] = useState(event.name);
@@ -29,21 +28,24 @@ const UpdateEventButton = ({ event }) => {
     let updatedEvent = {
       name: updatedName,
       description: updatedDescription,
-      id: uuidv4(),
       image: updatedImage,
       price: updatedPrice,
-      selectedDate: updatedSelectedDate,
+      selectedDate: String(updatedSelectedDate),
       totalSeats: parseInt(updatedTotalSeats),
     };
+    console.log(event.id);
+    console.log(updatedEvent);
     ref
       .doc(event.id)
       .update(updatedEvent)
+      .then(() => {
+        handleUpdateModalClose();
+        window.location.reload();
+      })
       .catch((err) => {
         console.error(err);
         setLoading(false);
       });
-
-    handleUpdateModalClose();
   }
 
   return (
@@ -63,9 +65,7 @@ const UpdateEventButton = ({ event }) => {
                 onChange={(e) => setupdatedName(e.target.value)}
                 required
               />
-              <label className="mt-1 form-label" for="form6Example3">
-                Event Name*
-              </label>
+              <label className="mt-1 form-label">Event Name*</label>
             </div>
 
             <div className="row mb-2">
@@ -81,9 +81,7 @@ const UpdateEventButton = ({ event }) => {
                   timeFormat="p"
                   onChange={(date) => setupdatedSelectedDate(date)}
                 />
-                <label className="d-block mt-1 form-label" for="form6Example1">
-                  Date & Time*
-                </label>
+                <label className="d-block mt-1 form-label">Date & Time*</label>
               </div>
               <div className="ml-3 d-inline mr-3 form-outline">
                 <input
@@ -94,9 +92,7 @@ const UpdateEventButton = ({ event }) => {
                   value={updatedTotalSeats}
                   onChange={(e) => setupdatedTotalSeats(e.target.value)}
                 />
-                <label className="mt-1 form-label" for="form6Example2">
-                  Total Seats
-                </label>
+                <label className="mt-1 form-label">Total Seats</label>
               </div>
             </div>
 
@@ -108,9 +104,7 @@ const UpdateEventButton = ({ event }) => {
                 value={updatedImage}
                 onChange={(e) => setupdatedImage(e.target.value)}
               />
-              <label className="mt-1 form-label" for="form6Example5">
-                Image
-              </label>
+              <label className="mt-1 form-label">Image</label>
             </div>
 
             <div className="form-outline mb-2">
@@ -122,9 +116,7 @@ const UpdateEventButton = ({ event }) => {
                 value={updatedPrice}
                 onChange={(e) => setupdatedPrice(e.target.value)}
               />
-              <label className="mt-1 form-label" for="form6Example6">
-                Price ($)
-              </label>
+              <label className="mt-1 form-label">Price ($)</label>
             </div>
 
             <div className="form-outline">
@@ -135,9 +127,7 @@ const UpdateEventButton = ({ event }) => {
                 value={updatedDescription}
                 onChange={(e) => setupdatedDescription(e.target.value)}
               ></textarea>
-              <label className="mt-1 form-label" for="form6Example7">
-                Description
-              </label>
+              <label className="mt-1 form-label">Description</label>
             </div>
           </form>
         </Modal.Body>

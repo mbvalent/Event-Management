@@ -1,9 +1,8 @@
 import React from "react";
-import { Card, Container } from "react-bootstrap";
+import { Alert, Card, Container } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import Footer from "./Footer";
 import Header from "./Header";
-// import ReactPhoneInput from "react-phone-input-2";
 import { useState } from "react";
 import "react-phone-input-2/lib/style.css";
 import app from "../firebase";
@@ -12,17 +11,7 @@ import { ToastContainer, toast } from "react-toastify";
 import firebase from "firebase";
 import emailjs from "emailjs-com";
 import { useEffect } from "react";
-
-// background: linear-gradient(
-//   to bottom,
-//   rgba(97, 96, 69, 0.8) 0%,
-//   rgba(92, 77, 66, 0.8) 100%
-// ),
-// url("./bg-masthead.jpg");
-// background-position: center;
-// background-repeat: no-repeat;
-// background-attachment: scroll;
-// background-size: cover;
+import { useRef } from "react";
 
 const BookEvent = ({ match }) => {
   const [phone, setPhone] = useState("");
@@ -36,7 +25,10 @@ const BookEvent = ({ match }) => {
   const [payment, setPayment] = useState(0);
   const [event, setEvent] = useState("");
 
-  //---------------------------------
+  const [error, setError] = useState("");
+
+  const nameRef = useRef();
+
   const sendMail = (entryIdForEntry) => {
     let templateParams = {
       event_name: event.name,
@@ -63,11 +55,10 @@ const BookEvent = ({ match }) => {
       );
   };
 
-  //---------------------------------
-
   const ref = app.firestore().collection("event");
 
   useEffect(() => {
+    nameRef.current.focus();
     async function getDoc(id) {
       const snapshot = await ref.doc(id).get();
       const data = snapshot.data();
@@ -80,7 +71,19 @@ const BookEvent = ({ match }) => {
     setEntries(entries);
     setPayment(event.price * entries);
   };
-  
+
+  const validationRules = (attendee) => {
+    if (
+      attendee.firstName === "" ||
+      attendee.email === "" ||
+      attendee.entries === "" ||
+      attendee.phone === ""
+    ) {
+      return true;
+    }
+    return false;
+  };
+
   function handleBookEvent() {
     let entryIdForEntry = uuidv4();
     let attendee = {
@@ -93,6 +96,10 @@ const BookEvent = ({ match }) => {
       entries: entries,
       entryId: entryIdForEntry,
     };
+    if (validationRules(attendee)) {
+      window.scrollTo(0, 0);
+      return setError("Please fill all required fields (*)");
+    }
     setLoading(true);
     ref
       .doc(match.params.id)
@@ -158,6 +165,8 @@ const BookEvent = ({ match }) => {
         <div className="w-100" style={{ maxWidth: "500px" }}>
           <Card className="shadow bg-light">
             <Card.Body>
+              {error && <Alert variant="danger">{error}</Alert>}
+
               <form id="rest-form">
                 <div className="row mb-2">
                   <div className="col">
@@ -165,11 +174,13 @@ const BookEvent = ({ match }) => {
                       <input
                         type="text"
                         id="form6Example1"
+                        ref={nameRef}
+                        required={true}
                         className=" form-control"
                         onChange={(e) => setFirstName(e.target.value)}
                       />
                       <label className="mt-1 form-label" for="form6Example1">
-                        First name
+                        First name*
                       </label>
                     </div>
                   </div>
@@ -196,7 +207,7 @@ const BookEvent = ({ match }) => {
                     onChange={(e) => setPhone(e.target.value)}
                   />
                   <label className="mt-1 form-label" for="form6Example3">
-                    Phone Number
+                    Phone Number*
                   </label>
                 </div>
 
@@ -220,7 +231,7 @@ const BookEvent = ({ match }) => {
                     onChange={(e) => setEmail(e.target.value)}
                   />
                   <label className="mt-1 form-label" for="form6Example5">
-                    Email
+                    Email*
                   </label>
                 </div>
                 <div className="form-outline mb-2">
@@ -233,20 +244,9 @@ const BookEvent = ({ match }) => {
                     max="10"
                   />
                   <label className="mt-1 form-label" for="form6Example5">
-                    Entries
+                    Entries*
                   </label>
                 </div>
-
-                {/* <div className="form-outline mb-2">
-                  <input
-                    type="number"
-                    id="form6Example6"
-                    className="form-control"
-                  />
-                  <label className="mt-1 form-label" for="form6Example6">
-                    Phone
-                  </label>
-                </div> */}
 
                 <div className="form-outline mb-2">
                   <textarea
@@ -278,7 +278,7 @@ const BookEvent = ({ match }) => {
           </Card>
 
           <Link className="mt-5 btn btn-lg btn-light" to="/events">
-            <i className="far fa-hand-point-left"></i> Go Back
+            <i className="far fa-hand-point-left"></i> Back to Events
           </Link>
         </div>
       </Container>

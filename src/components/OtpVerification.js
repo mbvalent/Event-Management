@@ -1,5 +1,3 @@
-import React, { useEffect } from "react";
-// import { auth } from "../firebase";
 import firebase from "firebase";
 import { Card, Container, Form, Alert, Button, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
@@ -15,11 +13,7 @@ const OtpVerification = () => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
-
-  // const handleShow = () => setShow(true);
   const handleClose = () => setShow(false);
-
-  // const [otp, setOtp] = useState("");
 
   const handleClick = () => {
     setMessage("");
@@ -63,23 +57,6 @@ const OtpVerification = () => {
             console.error(err);
           });
       });
-
-    // let recaptcha = new firebase.auth.RecaptchaVerifier("recaptcha");
-
-    // let number = "+916375423788";
-    // auth.signInWithPhoneNumber(number, recaptcha).then(function (e) {
-    //   let code = prompt("enter OTP: ", "");
-    //   if (code == null) return;
-    //   e.confirm(code)
-    //     .then(function (result) {
-    //       console.log(result.user, "user");
-    //       document.querySelector("label").textContent =
-    //         result.user.phoneNumber + " Number Verified";
-    //     })
-    //     .catch((err) => {
-    //       console.error(err);
-    //     });
-    // });
   };
   return (
     <div>
@@ -95,13 +72,10 @@ const OtpVerification = () => {
                   type="number"
                   placeholder="enter otp"
                   ref={phoneRef}
-                  // onChange={(e) => setOtp(parseInt(e.target.value))}
                   required
                 ></Form.Control>
               </Form.Group>
-
               <div id="recaptcha-container" />
-
               <Button
                 disabled={loading}
                 onClick={handleClick}
@@ -138,7 +112,6 @@ const OtpVerification = () => {
           style={{ minHeight: "100vh" }}
         >
           <div className="w-100" style={{ maxWidth: "400px" }}>
-            {/* <button onClick={handleShow}>Click Me</button> */}
             <Card>
               <Card.Body>
                 <h3 className="text-center mb-3">Phone Verification</h3>
@@ -154,9 +127,7 @@ const OtpVerification = () => {
                       required
                     ></Form.Control>
                   </Form.Group>
-
                   <div id="recaptcha-container" />
-
                   <Button
                     disabled={loading}
                     onClick={handleClick}
